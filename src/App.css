@@ -98,4 +98,10 @@ table tbody tr td:nth-child(1) {
 
 .text {
   word-break: break-all;
+  cursor: copy;
+}
+
+.text:hover {
+  background-color: #646cff;
+  color: white;
 }

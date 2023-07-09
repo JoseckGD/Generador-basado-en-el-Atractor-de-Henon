@@ -11,6 +11,7 @@ const y_max = 0.42;
 function App() {
   const [X0, setX0] = useState("");
   const [Y0, setY0] = useState("");
+  const [iterations, setIterations] = useState(1000);
   const [coordenadas, setCoordenadas] = useState(null);
   const [text, setText] = useState(null);
   const [tableHannon, setTableHannon] = useState(null);
@@ -23,6 +24,10 @@ function App() {
   };
 
   const Generar = () => {
+    if (iterations < 1000) {
+      return alert("Se recomiendan un numero de iteraciones mayor a 1000");
+    }
+
     const Hennon = [];
     const Hennon01 = [];
     Hennon.push([parseFloat(X0), parseFloat(Y0)]);
@@ -37,7 +42,7 @@ function App() {
     console.log(Hennon01);
     txt += `${Hennon01[0][0]}${Hennon01[0][1]}`;
 
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < iterations; i++) {
       Yi_1 = 0.3 * Hennon[i][0];
       Xi_1 = Hennon[i][1] + 1 - 1.4 * Math.pow(Hennon[i][0], 2);
       Hennon.push([Xi_1, Yi_1]);
@@ -91,6 +96,17 @@ function App() {
     setTableHannon01(null);
   };
 
+  const copySequence = () => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        console.log("Texto copiado al portapapeles");
+      })
+      .catch((error) => {
+        console.error("Error al copiar al portapapeles:", error);
+      });
+  };
+
   return (
     <>
       <h1>Generador basado en el atractor de Hennon</h1>
@@ -123,12 +139,25 @@ function App() {
         </div>
       </section>
 
+      <section className="container">
+        <label htmlFor="iterations" className="input-iterations">
+          Numero de iterations
+        </label>
+        <input
+          type="number"
+          id="iterations"
+          placeholder="Ingresa el numero de iterations"
+          value={iterations}
+          onChange={(e) => setIterations(e.target.value)}
+        />
+      </section>
+
       <section className="container buttons">
         <button className="button" onClick={validarCoordenadas}>
-          Validar
+          Generar Secuencia
         </button>
         <button className="button" onClick={generarCoordenadas}>
-          Generar
+          Generar Semillas de Inicio
         </button>
         <button className="button-reiniciar" onClick={handleReset}>
           Reiniciar
@@ -273,7 +302,10 @@ function App() {
 
       {text && (
         <section className="container">
-          <p className="text">{text}</p>
+          <h2>Haz clic en la secuencua para copiarla al portapales</h2>
+          <p className="text" onClick={() => copySequence()}>
+            {text}
+          </p>
           <button
             className="button"
             onClick={() => guardarDatosEnArchivo(text)}
